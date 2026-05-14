@@ -1,5 +1,5 @@
 streamlit-quill==0.0.3
-python-dotenv==1.0.1
+python-dotenv==1.2.2
 litellm>=1.66.2
 click==8.1.7
 questionary==2.0.1
