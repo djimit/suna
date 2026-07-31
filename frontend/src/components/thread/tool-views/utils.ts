@@ -155,17 +155,24 @@ export function extractFilePath(content: string | undefined): string | null {
 }
 
 // Helper to clean and process a file path string, handling escaped chars
+function unescapeToolText(value: string): string {
+  const escapes: Record<string, string> = {
+    n: '\n',
+    t: '\t',
+    r: '',
+    '\\': '\\',
+    '"': '"',
+    "'": "'",
+  };
+
+  return value.replace(/\\([ntr\\"'])/g, (_, escaped: string) => escapes[escaped]);
+}
+
 function cleanFilePath(path: string): string {
   if (!path) return path;
   
   // Handle escaped newlines and other escaped characters
-  return path
-    .replace(/\\n/g, '\n')    // Replace \n with actual newlines
-    .replace(/\\t/g, '\t')    // Replace \t with actual tabs
-    .replace(/\\r/g, '')      // Remove \r
-    .replace(/\\\\/g, '\\')   // Replace \\ with \
-    .replace(/\\"/g, '"')     // Replace \" with "
-    .replace(/\\'/g, "'")     // Replace \' with '
+  return unescapeToolText(path)
     .split('\n')[0]           // Take only the first line if multiline
     .trim();                  // Trim whitespace
 }
@@ -202,13 +209,7 @@ function processFileContent(content: string): string {
   if (!content) return content;
   
   // Handle escaped characters
-  return content
-    .replace(/\\n/g, '\n')   // Replace \n with actual newlines
-    .replace(/\\t/g, '\t')   // Replace \t with actual tabs
-    .replace(/\\r/g, '')     // Remove \r
-    .replace(/\\\\/g, '\\')  // Replace \\ with \
-    .replace(/\\"/g, '"')    // Replace \" with "
-    .replace(/\\'/g, "'");   // Replace \' with '
+  return unescapeToolText(content);
 }
 
 // Helper to determine file type (for syntax highlighting)
@@ -751,4 +752,4 @@ export function getToolComponent(toolName: string): string {
     default:
       return 'GenericToolView';
   }
-} 
+}

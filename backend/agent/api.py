@@ -710,7 +710,7 @@ async def run_agent_background(
             # Check for billing error status
             if response.get('type') == 'status' and response.get('status') == 'error':
                 error_msg = response.get('message', '')
-                logger.info(f"Agent run failed with error: {error_msg} (instance: {instance_id})")
+                logger.info(f"Agent run failed (instance: {instance_id})")
                 await update_agent_run_status(client, agent_run_id, "failed", error=error_msg, responses=all_responses)
                 break
                 
