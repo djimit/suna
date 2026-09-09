@@ -110,7 +110,7 @@
     "brace-expansion": "^2.1.2",
     "dompurify": "^3.4.12",
     "immutable": "^5.1.8",
-    "js-yaml": "^4.3.0",
+    "js-yaml": "^4.3.2",
     "postcss": "$postcss",
     "sharp": "^0.35.0",
     "tar": "^7.5.21"
