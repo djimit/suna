@@ -108,7 +108,7 @@
   "overrides": {
     "@babel/core": "^7.29.6",
     "brace-expansion": "^2.1.2",
-    "dompurify": "^3.4.13",
+    "dompurify": "^3.4.16",
     "immutable": "^5.1.8",
     "js-yaml": "^4.3.2",
     "postcss": "$postcss",
