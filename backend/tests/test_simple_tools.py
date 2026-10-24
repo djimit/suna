@@ -6,7 +6,10 @@ This script tests basic tool calling with both streaming and non-streaming to ve
 
 import asyncio
 import json
+import os
 from typing import Dict, Any
+
+import pytest
 
 from services.llm import make_llm_api_call
 from utils.logger import logger
@@ -34,6 +37,10 @@ CREATE_FILE_SCHEMA = {
     }
 }
 
+@pytest.mark.skipif(
+    os.getenv("RUN_LIVE_LLM_TESTS") != "1" or not os.getenv("OPENAI_API_KEY"),
+    reason="requires RUN_LIVE_LLM_TESTS=1 and OPENAI_API_KEY",
+)
 async def test_simple_tool_call():
     """Test a simple non-streaming tool call to verify functionality."""
     # Setup conversation
@@ -90,6 +97,10 @@ async def test_simple_tool_call():
     except Exception as e:
         logger.error(f"Error in test: {str(e)}", exc_info=True)
 
+@pytest.mark.skipif(
+    os.getenv("RUN_LIVE_LLM_TESTS") != "1" or not os.getenv("ANTHROPIC_API_KEY"),
+    reason="requires RUN_LIVE_LLM_TESTS=1 and ANTHROPIC_API_KEY",
+)
 async def test_streaming_tool_call():
     """Test tool calling with streaming to observe behavior."""
     # Setup conversation
@@ -233,4 +244,4 @@ async def main():
     await test_streaming_tool_call()
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())

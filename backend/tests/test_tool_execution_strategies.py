@@ -12,7 +12,7 @@ from unittest.mock import AsyncMock, patch
 from dotenv import load_dotenv
 from agentpress.thread_manager import ThreadManager
 from agentpress.response_processor import ProcessorConfig
-from agent.tools.wait_tool import WaitTool
+from tests.wait_tool import WaitTool
 
 # Load environment variables
 load_dotenv()
@@ -40,11 +40,17 @@ Now wait sequence:
 """
 
 # Create a simple mock function that logs instead of accessing the database
-async def mock_add_message(thread_id, message):
+async def mock_add_message(thread_id, content, **kwargs):
     print(f"MOCK: Adding message to thread {thread_id}")
-    print(f"MOCK: Message role: {message.get('role')}")
-    print(f"MOCK: Content length: {len(message.get('content', ''))}")
-    return {"id": "mock-message-id", "thread_id": thread_id}
+    print(f"MOCK: Message role: {content.get('role')}")
+    print(f"MOCK: Content length: {len(content.get('content', ''))}")
+    return {
+        "message_id": "mock-message-id",
+        "thread_id": thread_id,
+        "type": kwargs.get("type"),
+        "content": content,
+        "metadata": "{}",
+    }
 
 async def test_execution_strategies():
     """Test both sequential and parallel execution strategies in a thread."""
@@ -144,17 +150,19 @@ async def test_execution_strategies():
         async for chunk in thread_manager.response_processor.process_non_streaming_response(
             llm_response=mock_response,
             thread_id=thread_id,
+            prompt_messages=messages,
+            llm_model="test-model",
             config=config
         ):
-            if chunk.get('type') == 'tool_result':
-                tool_name = chunk.get('name', '')
+            if chunk.get('type') == 'tool':
+                result_content = chunk.get('content', {}).get('content', '')
                 tool_execution_count += 1
-                if tool_name == 'wait':
+                if '<wait>' in result_content:
                     wait_tool_count += 1
                 
                 elapsed = asyncio.get_event_loop().time() - start_time
-                print(f"⏱️ [{elapsed:.2f}s] Tool result: {chunk['name']}")
-                print(f"   {chunk['result']}")
+                print(f"⏱️ [{elapsed:.2f}s] Tool result")
+                print(f"   {result_content}")
                 print()
                 tool_results.append(chunk)
         
@@ -234,4 +242,4 @@ if __name__ == "__main__":
         sys.exit(1)
     except Exception as e:
         print(f"\n\n❌ Error during test: {str(e)}")
-        sys.exit(1) 
+        sys.exit(1)
