@@ -17,18 +17,19 @@ interface PdfRendererProps {
 export function PdfRenderer({ url, className }: PdfRendererProps) {
   // Create the default layout plugin instance
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
-  
+
   return (
     <div className={cn("flex flex-col w-full h-full", className)}>
       <div className="flex-1 overflow-hidden rounded-md">
-        <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js`}>
+        <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
           <Viewer
             fileUrl={url}
             plugins={[defaultLayoutPluginInstance]}
             defaultScale={1}
+            transformGetDocumentParams={(options) => ({ ...options, isEvalSupported: false })}
           />
         </Worker>
       </div>
     </div>
   );
-} 
+}
