@@ -11,7 +11,7 @@ import sys
 from dotenv import load_dotenv
 from agentpress.thread_manager import ThreadManager
 from agentpress.response_processor import ProcessorConfig
-from agent.tools.wait_tool import WaitTool
+from tests.wait_tool import WaitTool
 from agentpress.tool import ToolResult
 
 # Load environment variables
@@ -29,9 +29,9 @@ async def test_direct_execution():
     
     # Create wait tool calls
     wait_tool_calls = [
-        {"name": "wait", "arguments": {"seconds": 2, "message": "Wait tool 1"}},
-        {"name": "wait", "arguments": {"seconds": 2, "message": "Wait tool 2"}}, 
-        {"name": "wait", "arguments": {"seconds": 2, "message": "Wait tool 3"}}
+        {"function_name": "wait", "arguments": {"seconds": 2, "message": "Wait tool 1"}},
+        {"function_name": "wait", "arguments": {"seconds": 2, "message": "Wait tool 2"}},
+        {"function_name": "wait", "arguments": {"seconds": 2, "message": "Wait tool 3"}}
     ]
     
     # Expected values for validation
@@ -130,4 +130,4 @@ if __name__ == "__main__":
         sys.exit(1)
     except Exception as e:
         print(f"\n\n❌ Error during test: {str(e)}")
-        sys.exit(1) 
+        sys.exit(1)

@@ -11,7 +11,8 @@ import sys
 import os
 from typing import Dict, Any
 
-from anthropic import AsyncAnthropic
+import pytest
+
 from utils.logger import logger
 
 # Example tool schema for Anthropic format
@@ -34,6 +35,10 @@ CREATE_FILE_TOOL = {
     }
 }
 
+@pytest.mark.skipif(
+    os.getenv("RUN_LIVE_LLM_TESTS") != "1" or not os.getenv("ANTHROPIC_API_KEY"),
+    reason="requires RUN_LIVE_LLM_TESTS=1 and ANTHROPIC_API_KEY",
+)
 async def test_raw_streaming():
     """Test tool calling with streaming to observe raw chunk behavior using Anthropic SDK directly."""
     # Setup conversation with a prompt likely to generate large file payloads
@@ -49,6 +54,8 @@ async def test_raw_streaming():
         if not api_key:
             logger.error("ANTHROPIC_API_KEY environment variable not set")
             return
+
+        from anthropic import AsyncAnthropic
         
         # Initialize Anthropic client
         client = AsyncAnthropic(api_key=api_key)
@@ -190,4 +197,4 @@ async def main():
     await test_raw_streaming()
 
 if __name__ == "__main__":
-    asyncio.run(main()) 
+    asyncio.run(main())
